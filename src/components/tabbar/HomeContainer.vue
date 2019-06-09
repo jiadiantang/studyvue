@@ -1,11 +1,7 @@
 <template>
   <div>
-    <mt-swipe :auto="4000">
-      <mt-swipe-item :key="item.url" v-for="item in lunbotuList">
-        <img :src="item.img" alt>
-      </mt-swipe-item>
-    </mt-swipe>
 
+    <swiper :isfull="true" :lunbotuList="lunbotuList"></swiper>
     <ul class="mui-table-view mui-grid-view mui-grid-9">
       <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
         <router-link to="/home/newslist">
@@ -49,6 +45,7 @@
   </div>
 </template>
 <script>
+import swiper from '../subcomponents/swiper.vue'
 export default {
   data() {
     return {
@@ -70,32 +67,15 @@ export default {
           }
         });
     }
+  },
+  components:{
+    swiper
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.mint-swipe {
-  height: 200px;
-  .mint-swipe-item {
-    &:nth-child(1) {
-      background-color: red;
-    }
-    &:nth-child(2) {
-      background-color: blue;
-    }
-    &:nth-child(3) {
-      background-color: cyan;
-    }
-    img {
-      width: 100%;
-      height: 100%;
-    }
-    .mui-media-body{
-      font-size: 13px;
-    }
-  }
-}
+
 
 .mui-table-view.mui-grid-view.mui-grid-9{
     background-color: white;

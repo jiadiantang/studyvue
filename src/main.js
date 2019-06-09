@@ -4,6 +4,52 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 import router from './router.js'
 
+import Vuex from 'vuex'
+Vue.use(Vuex)
+var car  = JSON.parse(localStorage.getItem('car')|| '[]')
+var store = new Vuex.Store({
+    state:{
+        car:car,
+    },
+    mutations:{
+        addToCar(state, goodsinfo){
+            var flag = false;
+            state.car.some(item=>{
+                if(item.id==goodsinfo.id){
+                    flag = true;
+                    item.count+=parseInt(goodsinfo.count)
+                    return true;
+                }
+            })
+
+            if(!flag){
+                state.car.push(goodsinfo)
+            }
+
+            localStorage.setItem('car', JSON.stringify(state.car))
+        },
+    },
+    getters:{
+        getAllCount(state){
+            var c= 0;
+            state.car.forEach(item=>{
+                c+=item.count;
+            })
+            return c;
+        },
+        getGoodsCount(state){
+            var o = {};
+            state.car.forEach(item=>{
+                o[item.id] = item.count
+            })
+            console.log(o);
+            return o;
+        }
+    }
+})
+
+
+
 import moment from 'moment'
 Vue.filter('dateFormat', function(dataStr, pattern="YYYY-MM-DD HH:mm:ss"){
     return moment(dataStr).format(pattern);
@@ -35,5 +81,5 @@ var vm= new Vue({
     el:'#app',
     render:c=>c(app),
     router,
-
+    store,
 })
