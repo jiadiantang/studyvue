@@ -2,20 +2,17 @@
   <div class="shopcar-container">
     <!-- 商品列表区 -->
     <div class="goods-list">
-      <div class="mui-card" :key ="item.id"  v-for="item in goodslist">
+      <div class="mui-card" :key="item.id" v-for="(item ,i) in goodslist">
         <div class="mui-card-content">
           <div class="mui-card-content-inner">
-            <mt-switch></mt-switch>
-            <img
-              :src="item.thumb_path"
-              alt
-            >
+            <mt-switch @change="selectedChanged(item.id, $store.getters.getGoodsSelected[item.id])" v-model="$store.getters.getGoodsSelected[item.id]"></mt-switch>
+            <img :src="item.thumb_path" alt>
             <div class="info">
               <h1>{{item.title}}</h1>
               <p>
                 <span class="price">￥{{item.sell_price}}</span>
-                <numbox :initcount="$store.getters.getGoodsCount[item.id]"></numbox>
-                <a href>删除{</a>
+                <numbox :goodsid="item.id" :initcount="$store.getters.getGoodsCount[item.id]"></numbox>
+                <a @click.prevent="remove(item.id, i)">删除</a>
               </p>
             </div>
           </div>
@@ -26,9 +23,12 @@
     <!-- 结算区 -->
     <div class="mui-card">
       <div class="mui-card-content">
-        <div class="mui-card-content-inner">
-          这是一个最简单的卡片视图控件；卡片视图常用来显示完整独
-          立的一段信息，比如一篇文章的预览图、作者信息、点赞数量等
+        <div class="mui-card-content-inner jiesuan">
+          <div class="left">
+            <p>总计(不含运费)</p>
+            <p>已勾选商品 <span class="red"> {{$store.getters.getGoodsCountAndAmount.count}}</span>件, 总价<span class="red"> ￥{{$store.getters.getGoodsCountAndAmount.amount}}</span></p>
+          </div>
+          <mt-button type="danger">去结算</mt-button>
         </div>
       </div>
     </div>
@@ -38,30 +38,36 @@
 import numbox from "../subcomponents/shopcar_num.vue";
 export default {
   data() {
-      return {
-          goodslist:[]
-          }
+    return {
+      goodslist: []
+    };
   },
-  created(){
-      this.getGoodsList();
+  created() {
+    this.getGoodsList();
   },
   methods: {
     getGoodsList() {
-        var idArr = [];
-        this.$store.state.car.forEach(element => {
-            idArr.push(element.id)
-        });
+      var idArr = [];
+      this.$store.state.car.forEach(element => {
+        idArr.push(element.id);
+      });
 
+      if (idArr.length <= 0) {
+        return;
+      }
 
-        if(idArr.length<=0){
-            return;
-        }
-
-      this.$http.get("index/carlist/" ).then(result => {
+      this.$http.get("index/carlist/").then(result => {
         if (result.body.status == 0) {
           this.goodslist = result.body.message;
         }
       });
+    },
+    remove(id, index) {
+      this.goodslist.splice(index, 1);
+      this.$store.commit("removeFromCar", id);
+    },
+    selectedChanged(id, val){
+        this.$store.commit("updateGoodsSelected", {id:id, selected:val})
     }
   },
   components: {
@@ -94,6 +100,16 @@ export default {
         color: red;
         font-weight: bold;
       }
+    }
+  }
+  .jiesuan {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .red{
+        color:red;
+        font-weight: bold;
+        font-size: 16px;
     }
   }
 }

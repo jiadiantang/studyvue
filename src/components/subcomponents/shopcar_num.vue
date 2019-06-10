@@ -1,7 +1,7 @@
 <template>
   <div style="height:25px;" class="mui-numbox" data-numbox-min="1" :data-numbox-max="10">
     <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-    <input ref="numbox" @change = "countChanged" id="test" class="mui-input-numbox" type="number" :value="initcount">
+    <input readonly ref="numbox" @change = "countChanged" id="test" class="mui-input-numbox" type="number" :value="initcount">
     <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
   </div>
 </template>
@@ -15,10 +15,14 @@ export default {
     },
     methods:{
       countChanged(){
+        this.$store.commit("updateGoodsInfo",{
+          id:this.goodsid,
+          count:this.$refs.numbox.value,
+        })
         // this.$emit('getcount', parseInt(this.$refs.numbox.value))
       }
     },
-    props:["initcount"],
+    props:["initcount", "goodsid"],
     // watch:{
     //   'max':function(newVal, oldVal){
     //     mui(".mui-numbox").numbox().setOption('max', newVal);

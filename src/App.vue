@@ -1,6 +1,10 @@
 <template>
   <div class="app-container">
-    <mt-header fixed title="固定在顶部"></mt-header>
+    <mt-header fixed title="固定在顶部">
+      <span v-show="flag" @click="goBack" slot="left">
+        <mt-button icon="back">返回</mt-button>
+      </span>
+    </mt-header>
 
     <transition>
       <router-view></router-view>
@@ -31,13 +35,36 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      flag:false
+    };
+  },
+  created(){
+    if(this.$route.path=='/home'){
+      this.flag = false;
+    }else{
+      this.flag = true;
+    }
+  },
+  methods:{
+    goBack(){
+      this.$router.go(-1)
+    }
+  },
+  watch:{
+    '$route.path':function(newVal){
+      if(newVal=='/home'){
+        this.flag=false;
+      }else{
+        this.flag=true;
+      }
+    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.mint-header{
+.mint-header {
   z-index: 99;
 }
 .app-container {
@@ -60,38 +87,36 @@ export default {
   transition: all 0.5s ease;
 }
 
-.mui-bar-tab .mui-tab-item-llb.mui-active{
-  color:#007aff;
+.mui-bar-tab .mui-tab-item-llb.mui-active {
+  color: #007aff;
 }
 
 .mui-bar-tab .mui-tab-item-llb {
-    display: table-cell;
-    overflow: hidden;
-    width: 1%;
-    height: 50px;
-    text-align: center;
-    vertical-align: middle;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    color: #929292;
+  display: table-cell;
+  overflow: hidden;
+  width: 1%;
+  height: 50px;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #929292;
 }
 
 .mui-bar-tab .mui-tab-item-llb .mui-icon {
-    top: 3px;
-    width: 24px;
-    height: 24px;
-    padding-top: 0;
-    padding-bottom: 0;
+  top: 3px;
+  width: 24px;
+  height: 24px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
-.mui-bar-tab .mui-tab-item-llb .mui-icon~.mui-tab-label {
-    font-size: 11px;
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.mui-bar-tab .mui-tab-item-llb .mui-icon ~ .mui-tab-label {
+  font-size: 11px;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-
-
 </style>
 
 
